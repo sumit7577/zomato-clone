@@ -1,0 +1,62 @@
+const FONTFAMILY = {
+    BOLD: "common-Bold",
+    MEDIUM: "common-Medium"
+}
+
+const COLORS = {
+    THEME:"#213d69",
+    DEFAULT: '#888888',
+    PRIMARY: '#f96332',
+    LABEL: '#ABA7A7',
+    INFO: '#F5F5F5',
+    ERROR: '#FF3636',
+    SUCCESS: '#18ce0f',
+    WARNING: '#FFAE00',
+    SECONDARY: '#444444',
+    NEUTRAL: 'rgba(255, 255, 255, 0.2)',
+    TABS: '#8F8F8F33',
+    TEXT: '#32325D',
+    MUTED: '#8898AA',
+    INPUT: '#DCDCDC',
+    INPUT_SUCCESS: '#1be611',
+    INPUT_ERROR: '#ff3636',
+    ACTIVE: '#f96332',
+    BUTTON_COLOR: '#9C26B0',
+    PLACEHOLDER: '#4B4B4B',
+    THUMB_SWITCH_ON: '#f96332',
+    THUMB_SWITCH_OFF: '#fff',
+    SWITCH_ON: '#f96332',
+    SWITCH_OFF: '#898989',
+    GRADIENT_START: '#6B24AA',
+    GRADIENT_END: '#AC2688',
+    PRICE_COLOR: '#EAD5FB',
+    BORDER_COLOR: '#C4C4C4',
+    BLOCK: '#E7E7E7',
+    ICON: '#172B4D',
+    ICON_INPUT: '#555555',
+    HEADER: '#2c2c2c',
+    BORDER: '#CAD1D7',
+    WHITE: '#FFFFFF',
+    BLACK: '#000000',
+    TWITTER: '#55acee',
+    FACEBOOK: '#3b5998',
+    DRIBBBLE: '#ea4c89',
+    LINKEDIN: '#0077B5',
+    PINTEREST: '#cc2127',
+    YOUTUBE: '#e52d27',
+    TUMBLR: '#35465c',
+    GITHUB: '#333333',
+    BEHANCE: '#1769ff',
+    REDDIT: '#ff4500',
+    GOOGLE: '#dd4b39',
+    BG:"#EBEBEB",
+    BG2:"#EAEAF5",
+    THEME2:"#3E55D2",
+    LIGHTGREEN:"rgba(220, 242, 241,1)",
+    DARKGREEN:"#338222"
+};
+
+export default {
+    FONTFAMILY,
+    COLORS
+};
