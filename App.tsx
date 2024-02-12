@@ -7,7 +7,7 @@
 
 import React from 'react';
 import type {PropsWithChildren} from 'react';
-import Main from './screens';
+import Main from "./navigation"
 
 
 function App(): React.JSX.Element {

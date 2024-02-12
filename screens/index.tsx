@@ -1,9 +1,13 @@
 import { useState } from "react"
-import { SafeAreaView, StyleSheet, View, Text, Dimensions, Button, Image } from "react-native"
-import { Constant, Images,Theme } from "../Utils";
-import { Block, Icon,Input } from "galio-framework";
+import { SafeAreaView, StyleSheet, View, Text, Dimensions, Button, Image, ScrollView } from "react-native"
+import { Constant, Images, Theme } from "../Utils";
+import { Block, Icon, Input } from "galio-framework";
+import { AppCard } from "../components";
+import Card from "../components/card";
 
-const Main = () => {
+const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
+
+const HomeScreen = () => {
     const [counter, setCounter] = useState(0);
     return (
         <SafeAreaView>
@@ -15,7 +19,7 @@ const Main = () => {
                                 <Icon name="location" family="EvilIcons" color="red" size={40} />
                             </Block>
                             <Block>
-                                <Text style={[styles.text, { fontWeight: "bold" }]}>My Place</Text>
+                                <Text style={[styles.text]}>My Place</Text>
                                 <Text style={[styles.text, { fontSize: 10 }]}>Kings Cafe Restaurant, Near Tiger FItness Gym</Text>
                             </Block>
                         </Block>
@@ -38,6 +42,17 @@ const Main = () => {
                         iconSize={20}
                         iconColor="red"
                     />
+                    <ScrollView horizontal style={{ flex: 0 }} showsHorizontalScrollIndicator={false}>
+                        <Block gap={8} row>
+                            {filters.map((item, index) => {
+                                return (
+                                    <AppCard text={item} key={index} />
+                                )
+                            }
+                            )}
+                        </Block>
+                    </ScrollView>
+
                 </View>
 
                 <View style={styles.body}>
@@ -62,7 +77,7 @@ const styles = StyleSheet.create({
     text: {
         color: "black",
         fontSize: 15,
-        fontFamily:Theme.FONTFAMILY.BOLD
+        fontFamily: Theme.FONTFAMILY.BOLD
     },
     header: {
 
@@ -80,4 +95,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Main;
+export default HomeScreen;
