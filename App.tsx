@@ -6,14 +6,20 @@
  */
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
+import type { PropsWithChildren } from 'react';
 import Main from "./navigation"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+
+const queryClient = new QueryClient()
 
 function App(): React.JSX.Element {
 
   return (
-    <Main />
+    <QueryClientProvider client={queryClient}>
+      <Main />
+    </QueryClientProvider>
+
   );
 }
 

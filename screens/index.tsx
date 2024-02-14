@@ -1,14 +1,29 @@
-import { useState } from "react"
-import { SafeAreaView, StyleSheet, View, Text, Dimensions, Button, Image, ScrollView, TouchableOpacity } from "react-native"
+import { useEffect, useState } from "react"
+import { SafeAreaView, StyleSheet, View, Text, Dimensions, Button, Image, ScrollView, TouchableOpacity, FlatList, Platform, TouchableHighlight } from "react-native"
 import { Constant, Images, Theme } from "../Utils";
 import { Block, Icon, Input } from "galio-framework";
 import { AppCard, RestaurantCard } from "../components";
 import Card from "../components/card";
+import { getRecipes } from "../networking/controller";
+import { RecipesType } from "../networking/types";
+import { useQuery } from "@tanstack/react-query";
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
 const HomeScreen = () => {
     const [selected, setSelected] = useState<"Recommended" | "Favourites">("Recommended");
+    const { data, isLoading,isError } = useQuery({
+        queryKey: ['recipe'],
+        queryFn: getRecipes
+    })
+
+    if(isLoading){
+        return (
+            <SafeAreaView style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
+                <Text style={styles.text}>is Loading...</Text>
+            </SafeAreaView>
+        )
+    }
     return (
         <SafeAreaView>
             <View style={styles.container}>
@@ -37,8 +52,8 @@ const HomeScreen = () => {
                     <Input
                         placeholder='Search "Pizza"'
                         right
-                        icon="microphone"
-                        family="Foundation"
+                        icon="search"
+                        family="Feather"
                         iconSize={20}
                         iconColor="red"
                     />
@@ -75,7 +90,21 @@ const HomeScreen = () => {
                         </TouchableOpacity>
 
                     </Block>
-                    <RestaurantCard />
+
+                    <View style={{ marginTop: "5%" }}>
+                        <FlatList
+                            showsVerticalScrollIndicator={false}
+                            data={data && data.recipes}
+                            renderItem={({ item, index, separators }) => (
+                                <TouchableHighlight
+                                    key={item.id}
+                                    onShowUnderlay={separators.highlight}
+                                    onHideUnderlay={separators.unhighlight}>
+                                    <RestaurantCard data={item} />
+                                </TouchableHighlight>
+                            )}
+                        />
+                    </View>
 
                 </View>
                 <View style={styles.footer}>
@@ -103,7 +132,7 @@ const styles = StyleSheet.create({
     header: {
     },
     body: {
-        marginTop: "8%"
+        marginTop: "8%",
     },
     footer: {
     },
