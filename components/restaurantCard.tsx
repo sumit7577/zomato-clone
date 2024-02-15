@@ -9,7 +9,7 @@ export default function RestaurantCard({ data }: { data: RecipesType['recipes'][
     return (
         <View style={styles.container}>
             <Block shadow style={styles.card}>
-                <Image source={{ uri: data.image }} style={{ height: Constant.height / 3, width: Constant.width / 1.1, resizeMode: "cover" }} />
+                <Image source={{ uri: data.image }} style={{ height: Constant.height / 3, width: Constant.width / 1.1, resizeMode: "cover",overflow:"hidden" }} />
                 <Block row style={{ padding: "2%" }}>
                     <Block gap={4} flex={10}>
                         <Text style={[styles.text, { color: Theme.COLORS.BLACK, fontSize: 20 }]}>{data.name}</Text>

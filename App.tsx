@@ -7,7 +7,7 @@
 
 import React from 'react';
 import type { PropsWithChildren } from 'react';
-import Main from "./navigation"
+import Main from "./screens";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
@@ -16,9 +16,9 @@ const queryClient = new QueryClient()
 function App(): React.JSX.Element {
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Main />
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <Main />
+      </QueryClientProvider>
 
   );
 }
