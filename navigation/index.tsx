@@ -1,9 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native"
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Icon } from "galio-framework";
 import Dining from "../screens/dining";
 import Grocery from "../screens/grocery";
-import LifeCycle from "../screens/lifeCycle";
 import Delivery from "../screens/Delivery";
 
 const Tab = createBottomTabNavigator();
@@ -12,7 +11,7 @@ const Navigator = () => {
     return (
         <NavigationContainer>
             <Tab.Navigator initialRouteName="Delivery" screenOptions={{
-                headerShown: false
+                headerShown:false
             }}>
                 <Tab.Screen name="Delivery" component={Delivery} options={{
                     tabBarLabel: 'Delivery',

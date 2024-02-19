@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { SafeAreaView, StyleSheet, View, Text, Dimensions, Button, Image, ScrollView, TouchableOpacity, FlatList, Platform, TouchableHighlight } from "react-native"
 import { Constant, Images, Theme } from "../Utils";
 import { Block, Icon, Input } from "galio-framework";
 import { AppCard, RestaurantCard, AppBottomSheet } from "../components";
 import Card from "../components/card";
 import { getRecipes } from "../networking/controller";
-import { RecipesType } from "../networking/types";
 import { useQuery } from "@tanstack/react-query";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
@@ -31,15 +29,23 @@ const Delivery = () => {
                 <View style={styles.header}>
 
                     <Block row space="between">
-                        <Block row>
-                            <Block>
-                                <Icon name="location" family="EvilIcons" color="red" size={40} />
+                        <TouchableOpacity onPress={() => {
+                            console.log("clicked")
+                        }}>
+                            <Block row>
+                                <Block>
+                                    <Icon name="location" family="EvilIcons" color="red" size={40} />
+                                </Block>
+                                <Block style={{ maxWidth: "80%" }}>
+                                    <Block row style={{ alignItems: "center" }} gap={2}>
+                                        <Text style={[styles.text]}>My Place</Text>
+                                        <Icon name="down" family="AntDesign" size={12} />
+                                    </Block>
+
+                                    <Text style={[styles.text, { fontSize: 10 }]}>Kings Cafe Restaurant, Near Tiger FItness Gym</Text>
+                                </Block>
                             </Block>
-                            <Block>
-                                <Text style={[styles.text]}>My Place</Text>
-                                <Text style={[styles.text, { fontSize: 10 }]}>Kings Cafe Restaurant, Near Tiger FItness Gym</Text>
-                            </Block>
-                        </Block>
+                        </TouchableOpacity>
 
                         <Block row center style={{ gap: 8 }}>
                             <Block shadow>
@@ -123,7 +129,7 @@ const styles = StyleSheet.create({
         height: Constant.height,
         paddingHorizontal: "5%",
         paddingVertical: "5%",
-        backgroundColor:Theme.COLORS.WHITE
+        backgroundColor: Theme.COLORS.WHITE
     },
     text: {
         color: Theme.COLORS.BLACK,

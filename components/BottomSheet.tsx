@@ -1,59 +1,69 @@
-import { View, Text, StyleSheet,Button } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import {
+import BottomSheet, {
     BottomSheetModal,
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { Constant } from '../Utils';
+import { Button } from 'galio-framework';
 
-
-
-export default function BottomSheets() {
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+interface BottomSheetProps{
+    children:React.ReactNode
+}
+const BottomSheets = (props:BottomSheetProps) => {
+    const {children} = props;
+    // hooks
+    const bottomSheetRef = useRef<BottomSheet>(null);
 
     // variables
-    const snapPoints = useMemo(() => ['25%',"50%"], []);
+    const snapPoints = useMemo(() => ["50%"], []);
 
     // callbacks
-    const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
+    const handleSheetChange = useCallback((index: any) => {
+        // eslint-disable-next-line no-console
+        console.log('handleSheetChange', index);
+    }, []);
+    const handleSnapPress = useCallback((index: number) => {
+        bottomSheetRef.current?.snapToIndex(index);
+    }, []);
+    const handleExpandPress = useCallback(() => {
+        bottomSheetRef.current?.expand();
+    }, []);
+    const handleCollapsePress = useCallback(() => {
+        bottomSheetRef.current?.collapse();
+    }, []);
+    const handleClosePress = useCallback(() => {
+        bottomSheetRef.current?.close();
     }, []);
 
-    useEffect(()=>{
-        bottomSheetModalRef.current?.present()
-    },[])
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-    }, []);
+    // renders
     return (
-        <BottomSheetModalProvider>
-            <View style={styles.container}>
-                <BottomSheetModal
-                    ref={bottomSheetModalRef}
-                    index={1}
-                    snapPoints={snapPoints}
-                    onChange={handleSheetChanges}
-                    animateOnMount
-                >
-                    <View style={styles.contentContainer}>
-                        <Text>Awesome 🎉</Text>
-                    </View>
-                </BottomSheetModal>
-            </View>
-        </BottomSheetModalProvider>
-    )
-}
+        <View style={styles.container}>
+            <BottomSheet
+                ref={bottomSheetRef}
+                index={-1}
+                snapPoints={snapPoints}
+                animateOnMount={true}
+                enablePanDownToClose={true}
+                detached={true}
+                onChange={handleSheetChange}
+            >
+                {children}
+            </BottomSheet>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24,
-        borderWidth:1,
-        position:"absolute",
-        flex:1
-        
-    },
-    contentContainer: {
         flex: 1,
-        alignItems: 'center',
+        padding: 24,
+        zIndex:1000,
+        height:Constant.height,
+        position:"absolute",
+        width:Constant.width,
     },
 });
+
+
+export default BottomSheets;
