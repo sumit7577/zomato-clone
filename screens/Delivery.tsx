@@ -6,10 +6,14 @@ import { AppCard, RestaurantCard, AppBottomSheet } from "../components";
 import Card from "../components/card";
 import { getRecipes } from "../networking/controller";
 import { useQuery } from "@tanstack/react-query";
+import { useMMKVStorage } from "react-native-mmkv-storage";
+import AppStorge from "../Utils/storage";
+import { initialState } from "../store/user/reducer";
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
 const Delivery = () => {
+    const userData = useMMKVStorage<undefined | { username: "", phone: "" }>("user", AppStorge);
     const [selected, setSelected] = useState<"Recommended" | "Favourites">("Recommended");
     const { data, isLoading, isError } = useQuery({
         queryKey: ['recipe'],
@@ -38,7 +42,7 @@ const Delivery = () => {
                                 </Block>
                                 <Block style={{ maxWidth: "80%" }}>
                                     <Block row style={{ alignItems: "center" }} gap={2}>
-                                        <Text style={[styles.text]}>My Place</Text>
+                                        <Text style={[styles.text]}>{userData[0]?.phone}</Text>
                                         <Icon name="down" family="AntDesign" size={12} />
                                     </Block>
 

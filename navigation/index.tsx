@@ -4,14 +4,16 @@ import { Icon } from "galio-framework";
 import Dining from "../screens/dining";
 import Grocery from "../screens/grocery";
 import Delivery from "../screens/Delivery";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "../screens/Login";
 
 const Tab = createBottomTabNavigator();
 
-const Navigator = () => {
+const BottomNavigator = () => {
     return (
         <NavigationContainer>
             <Tab.Navigator initialRouteName="Delivery" screenOptions={{
-                headerShown:false
+                headerShown: false
             }}>
                 <Tab.Screen name="Delivery" component={Delivery} options={{
                     tabBarLabel: 'Delivery',
@@ -37,4 +39,20 @@ const Navigator = () => {
 }
 
 
-export default Navigator;
+const Stack = createNativeStackNavigator();
+
+const StackNavigator = () => {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Login" screenOptions={{
+                headerShown: true
+            }}>
+                <Stack.Screen name="Login" component={Login} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    )
+
+}
+
+
+export { BottomNavigator, StackNavigator }

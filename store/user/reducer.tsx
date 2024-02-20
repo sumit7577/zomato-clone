@@ -1,10 +1,14 @@
 import { UserAction } from "./action";
 
 
-const initialState = {
+export const initialState = {
     userData: {},
     isLoggedIn: false
 
+}
+
+export const userState = (state: { userReducer: typeof initialState }) => {
+    return state.userReducer
 }
 
 export const userReducer = (state = initialState, action: { type: UserAction, data: any }) => {
