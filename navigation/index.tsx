@@ -45,7 +45,7 @@ const StackNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Login" screenOptions={{
-                headerShown: true
+                headerShown: false
             }}>
                 <Stack.Screen name="Login" component={Login} />
             </Stack.Navigator>

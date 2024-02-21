@@ -19,7 +19,6 @@ type MainProps = {
 const Main = (props: MainProps) => {
     const { userData, isLoggedIn,userLogin } = props;
     const database = useMMKVStorage("user", AppStorge);
-    console.log(database)
     if (database[0]) {
         return <BottomNavigator />
     }
