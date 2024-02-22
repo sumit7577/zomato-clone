@@ -17,12 +17,16 @@ type MainProps = {
 } & typeof initialState
 
 const Main = (props: MainProps) => {
-    const { userData, isLoggedIn,userLogin } = props;
+    const { userData, isLoggedIn, userLogin } = props;
     const database = useMMKVStorage("user", AppStorge);
     if (database[0]) {
         return <BottomNavigator />
     }
-    return <StackNavigator />
+    return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <StackNavigator />
+        </GestureHandlerRootView>
+    )
 }
 
 const mapDispatchToProps = (dispatch: any) => {
