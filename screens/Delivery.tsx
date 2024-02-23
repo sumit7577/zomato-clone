@@ -9,11 +9,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useMMKVStorage } from "react-native-mmkv-storage";
 import AppStorge from "../Utils/storage";
 import { initialState } from "../store/user/reducer";
+import { User } from "@react-native-google-signin/google-signin";
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
 const Delivery = () => {
-    const userData = useMMKVStorage<undefined | { username: "", phone: "" }>("user", AppStorge);
+    const userData = useMMKVStorage<undefined | User>("user", AppStorge);
     const [selected, setSelected] = useState<"Recommended" | "Favourites">("Recommended");
     const { data, isLoading, isError } = useQuery({
         queryKey: ['recipe'],
@@ -42,7 +43,7 @@ const Delivery = () => {
                                 </Block>
                                 <Block style={{ maxWidth: "80%" }}>
                                     <Block row style={{ alignItems: "center" }} gap={2}>
-                                        <Text style={[styles.text]}>{userData[0]?.phone}</Text>
+                                        <Text style={[styles.text]}>{userData[0]?.user.email}</Text>
                                         <Icon name="down" family="AntDesign" size={12} />
                                     </Block>
 
@@ -56,7 +57,7 @@ const Delivery = () => {
                                 <Icon name="language" family="Entypo" color="black" size={25} />
                             </Block>
                             <Block style={{ height: 45, width: 45, borderRadius: 45 / 2, borderWidth: 1, borderColor: "red", overflow: "hidden" }}>
-                                <Image source={Images.user.profile} style={styles.image} />
+                                <Image source={{ uri: userData[0]?.user.photo }} style={styles.image} />
                             </Block>
                         </Block>
                     </Block>

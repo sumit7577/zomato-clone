@@ -4,8 +4,10 @@ import { Icon } from "galio-framework";
 import Dining from "../screens/dining";
 import Grocery from "../screens/grocery";
 import Delivery from "../screens/Delivery";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../screens/Login";
+import Otp from "../screens/Otp";
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,8 +40,14 @@ const BottomNavigator = () => {
     )
 }
 
+type RootStackParamList = {
+    Login: undefined;
+    Otp: { confirm: FirebaseAuthTypes.ConfirmationResult, phone: string | null, code: string }
+};
 
-const Stack = createNativeStackNavigator();
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+export type HomeScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;
 
 const StackNavigator = () => {
     return (
@@ -48,6 +56,7 @@ const StackNavigator = () => {
                 headerShown: false
             }}>
                 <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Otp" component={Otp} />
             </Stack.Navigator>
         </NavigationContainer>
     )

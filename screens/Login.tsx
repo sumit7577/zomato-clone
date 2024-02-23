@@ -10,25 +10,48 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { CountryItem, CountryPicker } from 'react-native-country-codes-picker'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import auth from "@react-native-firebase/auth"
+import { GoogleSignin, User } from '@react-native-google-signin/google-signin'
+import { HomeScreenProps } from '../navigation'
 
-type LoginProps = {
+
+type LoginProps = HomeScreenProps<"Login"> & {
     userLogin: (data: typeof initialState.userData) => void,
 } & typeof initialState
+
 
 const Login = (props: LoginProps) => {
     const [showPhone, setShowPhone] = useState<boolean>(false);
     const [code, setCode] = useState<{ flag: string, code: string }>({ flag: "🇮🇳", code: "+91" })
-    const [phone,setPhone] = useState<string | null>(null);
-    const loginUser = () => {
-        AppStorge.setMapAsync("user", { username: "sumit", phone: "919117517898" })
+    const [phone, setPhone] = useState<string | null>(null);
+    const loginUser = (data: User) => {
+        AppStorge.setMapAsync("user", data)
     }
     async function signInWithPhoneNumber() {
-        console.log(`${code.code}${phone}`)
-        try{
+        try {
             const confirmation = await auth().signInWithPhoneNumber(`${code.code}${phone}`);
+            if (confirmation) {
+                props.navigation.navigate("Otp", {
+                    confirm: confirmation,
+                    phone: phone,
+                    code: code.code
+                });
+            }
         }
-        catch(erro){
+        catch (erro) {
             console.log(erro)
+        }
+    }
+
+    const googleSignIn = async () => {
+        try {
+            const code = await GoogleSignin.hasPlayServices();
+            if (code) {
+                const userInfo = await GoogleSignin.signIn();
+                loginUser(userInfo)
+            }
+        }
+        catch (error) {
+            console.log(error)
         }
     }
     return (
@@ -78,7 +101,7 @@ const Login = (props: LoginProps) => {
                             onPress={() => {
                                 setShowPhone(() => !showPhone)
                             }}>
-                            <Block row middle gap={2} style={{ padding: "4%" }}>
+                            <Block row middle gap={2} style={{ padding: 16, borderWidth: 1, borderRadius: 6, borderColor: Theme.COLORS.MUTED }}>
                                 <Text style={styles.text}>{code.flag}</Text>
                                 <Icon name="down" family="AntDesign" />
                             </Block>
@@ -86,11 +109,11 @@ const Login = (props: LoginProps) => {
                         <Block row gap={2} style={{ backgroundColor: Theme.COLORS.WHITE, borderWidth: 1, borderColor: Theme.COLORS.MUTED, borderRadius: 8, alignItems: "center", elevation: 4 }}>
                             <Text style={[styles.text, { color: Theme.COLORS.BLACK, fontSize: 16, paddingLeft: "4%" }]}>{code.code}</Text>
                             <Input
-                            onChangeText={(data)=>{
-                                setPhone(()=>data);
+                                onChangeText={(data) => {
+                                    setPhone(() => data);
 
-                            }}
-                             style={{ width: Constant.width / 1.8, borderWidth: 0 }}
+                                }}
+                                style={{ width: Constant.width / 1.8, borderWidth: 0 }}
                                 placeholder='Enter Mobile Number'
                                 type="decimal-pad" maxLength={10}
                                 textInputStyle={{ fontFamily: Theme.FONTFAMILY.MEDIUM, fontSize: 16, color: Theme.COLORS.BLACK }} />
@@ -108,6 +131,21 @@ const Login = (props: LoginProps) => {
 
                 </View>
                 <View style={styles.footer}>
+                    <Block center style={{ marginBottom: "4%" }}>
+                        <Text style={styles.text}>Or</Text>
+                    </Block>
+
+                    <Block row middle gap={70}>
+                        <TouchableOpacity style={styles.login} onPress={googleSignIn}>
+                            <Icon name="google" family="AntDesign" size={30} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.login}>
+                            <Icon name="email" family="Fontisto" size={30} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.login}>
+                            <Icon name="more-horizontal" family="Feather" size={30} />
+                        </TouchableOpacity>
+                    </Block>
 
                 </View>
             </View>
@@ -134,6 +172,14 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 1,
+        marginTop: "4%"
+    },
+    login: {
+        borderWidth: 1, alignItems: "center",
+        borderRadius: 8,
+        padding: 10,
+        backgroundColor: Theme.COLORS.WHITE,
+        borderColor: Theme.COLORS.MUTED
     }
 })
 
