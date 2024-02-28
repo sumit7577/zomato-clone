@@ -10,11 +10,15 @@ import { useMMKVStorage } from "react-native-mmkv-storage";
 import AppStorge from "../Utils/storage";
 import { initialState } from "../store/user/reducer";
 import { User } from "@react-native-google-signin/google-signin";
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { DeliveryScreenProps } from "../navigation";
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
-const Delivery = () => {
-    const userData = useMMKVStorage<undefined | User>("user", AppStorge);
+type DeliveryProps = DeliveryScreenProps<"DeliveryStack">;
+
+const Delivery = (props: DeliveryProps) => {
+    const userData = useMMKVStorage<undefined | User | FirebaseAuthTypes.UserCredential>("user", AppStorge);
     const [selected, setSelected] = useState<"Recommended" | "Favourites">("Recommended");
     const { data, isLoading, isError } = useQuery({
         queryKey: ['recipe'],
@@ -43,7 +47,7 @@ const Delivery = () => {
                                 </Block>
                                 <Block style={{ maxWidth: "80%" }}>
                                     <Block row style={{ alignItems: "center" }} gap={2}>
-                                        <Text style={[styles.text]}>{userData[0]?.user.email}</Text>
+                                        <Text style={[styles.text]}>{userData[0]?.user.email || userData[0]?.user?.phoneNumber}</Text>
                                         <Icon name="down" family="AntDesign" size={12} />
                                     </Block>
 
@@ -110,6 +114,9 @@ const Delivery = () => {
                             data={data && data.recipes}
                             renderItem={({ item, index, separators }) => (
                                 <TouchableHighlight
+                                    onPress={(e) => {
+                                        props.navigation.navigate("Restaurant")
+                                    }}
                                     key={item.id}
                                     onShowUnderlay={separators.highlight}
                                     onHideUnderlay={separators.unhighlight}>

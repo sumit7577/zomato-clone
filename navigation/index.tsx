@@ -8,6 +8,31 @@ import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navig
 import Login from "../screens/Login";
 import Otp from "../screens/Otp";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import Restaurant from "../screens/Restaurant";
+
+
+type DeliveryStackParamList = {
+    DeliveryStack: undefined,
+    Restaurant: undefined
+};
+
+const Delievery = createNativeStackNavigator<DeliveryStackParamList>()
+export type DeliveryScreenProps<T extends keyof DeliveryStackParamList> = NativeStackScreenProps<DeliveryStackParamList, T>;
+
+const DeliveryNavigator = () => {
+    return (
+        <NavigationContainer independent={true}>
+            <Delievery.Navigator initialRouteName="DeliveryStack" screenOptions={{
+                headerShown: false
+            }}>
+                <Delievery.Screen name="DeliveryStack" component={Delivery} />
+                <Delievery.Screen name="Restaurant" component={Restaurant} />
+            </Delievery.Navigator>
+        </NavigationContainer>
+
+    )
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -17,7 +42,7 @@ const BottomNavigator = () => {
             <Tab.Navigator initialRouteName="Delivery" screenOptions={{
                 headerShown: false
             }}>
-                <Tab.Screen name="Delivery" component={Delivery} options={{
+                <Tab.Screen name="Delivery" component={DeliveryNavigator} options={{
                     tabBarLabel: 'Delivery',
                     tabBarIcon: ({ color }) => (
                         <Icon name="delivery-dining" family="MaterialIcons" color={color} size={26} />
@@ -47,7 +72,7 @@ type RootStackParamList = {
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-export type HomeScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;
+export type LoginScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;
 
 const StackNavigator = () => {
     return (

@@ -1,15 +1,55 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, TextInput, Alert } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Block, Icon, Input } from 'galio-framework'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Constant, Theme } from '../Utils'
-import { HomeScreenProps } from '../navigation'
+import { LoginScreenProps } from '../navigation'
+import AppStorge from '../Utils/storage'
 
-type OtpProps = HomeScreenProps<"Otp">;
+type OtpProps = LoginScreenProps<"Otp">;
+
+const OtpInput = ({ setOtp, index }: { setOtp: React.Dispatch<React.SetStateAction<string>>, index: number }) => {
+    const inputRef = useRef<TextInput>(null)
+    if (index)
+        return (
+            <Input style={{ width: Constant.width / 8 }}
+                textInputStyle={{ fontFamily: Theme.FONTFAMILY.MEDIUM, fontSize: 14, padding: 0, textAlign: "center", color: Theme.COLORS.BLACK }}
+                type="decimal-pad"
+                maxLength={1}
+                onChangeText={(text) => {
+                    if (text === "") {
+                        setOtp((prev) => {
+                            return prev.slice(0, index) + prev.slice(prev.length)
+                        })
+                    }
+                    else {
+                        setOtp((prev) => prev + text)
+                    }
+                }}
+                ref={inputRef} />
+        )
+}
 
 const Otp = (props: OtpProps) => {
     const { confirm, phone, code } = props.route.params
+    const [otp, setOtp] = useState<string>("");
+    const confirmOtp = async () => {
+        try {
+            const isAutheticated = await confirm.confirm(otp);
+            if (isAutheticated) {
+                AppStorge.setMapAsync("user", isAutheticated)
+            }
+        }
+        catch (error) {
+            Alert.alert("Otp Error", `Otp Expired!`)
+        }
+    }
+    useEffect(() => {
+        if (otp.length === 6) {
+            confirmOtp()
+        }
+    }, [otp])
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
@@ -32,12 +72,8 @@ const Otp = (props: OtpProps) => {
                     </Block>
 
                     <Block row middle space='between' style={{ marginTop: "4%" }}>
-                        {Array.from({ length: 6 }, (i, v) => i).map((item, index) => (
-                            <Input style={{ width: Constant.width / 8 }}
-                                key={index}
-                                textInputStyle={{ fontFamily: Theme.FONTFAMILY.MEDIUM, fontSize: 14, padding: 0, textAlign: "center", color: Theme.COLORS.BLACK }}
-                                type="decimal-pad"
-                                maxLength={1} />
+                        {Array.from({ length: 7 }, (i, v) => i).map((item, index) => (
+                            <OtpInput key={index} setOtp={setOtp} index={index} />
                         ))}
 
                     </Block>

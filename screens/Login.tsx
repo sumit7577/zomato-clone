@@ -11,10 +11,10 @@ import { CountryItem, CountryPicker } from 'react-native-country-codes-picker'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin, User } from '@react-native-google-signin/google-signin'
-import { HomeScreenProps } from '../navigation'
+import { LoginScreenProps } from '../navigation'
 
 
-type LoginProps = HomeScreenProps<"Login"> & {
+type LoginProps = LoginScreenProps<"Login"> & {
     userLogin: (data: typeof initialState.userData) => void,
 } & typeof initialState
 
