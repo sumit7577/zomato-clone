@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { View, Text, StyleSheet, StyleProp, TextStyle, ViewStyle, GestureResponderEvent } from 'react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Icon, IconFamilyType, IconProps } from 'galio-framework'
@@ -6,7 +6,7 @@ import { Theme } from '../Utils';
 
 
 interface HeroIconsProps extends IconProps {
-    onPress?: () => void,
+    onClick?: () => void,
     text?: string,
     left?: boolean,
     right?: boolean,
@@ -15,7 +15,7 @@ interface HeroIconsProps extends IconProps {
 }
 
 export default function HeroIcon(props: HeroIconsProps) {
-    const { onPress, left, right, text, textStyle, containerStyle } = props;
+    const { onClick, left, right, text, textStyle, containerStyle } = props;
     const textStyls = [
         styles.text,
         textStyle && textStyle
@@ -26,7 +26,7 @@ export default function HeroIcon(props: HeroIconsProps) {
 
     ]
     return (
-        <TouchableOpacity onPress={onPress && onPress} style={blockStyle}>
+        <TouchableOpacity onPress={onClick} style={blockStyle}>
             {left && <Text style={textStyls}>{text}</Text>}
             <Icon  {...props} size={25} color={Theme.COLORS.BLACK} />
             {right && <Text style={textStyls}>{text}</Text>}

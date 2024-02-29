@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, TouchableHighlight } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Constant, Images, Theme } from '../Utils'
 import { Block, Button, Icon, IconFamilyType } from 'galio-framework'
@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query'
 import { getRecipes } from '../networking/controller'
 import { RecipesType } from '../networking/types'
 import { DeliveryScreenProps } from '../navigation'
+import { AppBottomSheet, AppQuantity } from '../components'
+import { BottomSheetFlatList, BottomSheetScrollView } from '@gorhom/bottom-sheet'
 
 const filters: { name: string, family: IconFamilyType, icon: string }[] = [
     { name: "Filters", icon: "filter", family: "FontAwesome5" },
@@ -21,7 +23,7 @@ const filters: { name: string, family: IconFamilyType, icon: string }[] = [
 ]
 
 
-const Foods = ({ data }: { data: RecipesType['recipes'][0] }) => {
+const Foods = ({ data, setSheet, setCart }: { data: RecipesType['recipes'][0], setSheet: React.Dispatch<React.SetStateAction<number>>, setCart: React.Dispatch<React.SetStateAction<RecipesType['recipes'][0]>> }) => {
     return (
         <Block row space='between' middle style={{ maxHeight: Constant.height / 3, borderBottomWidth: 1, borderColor: Theme.COLORS.MUTED, paddingVertical: "10%" }}>
             <Block style={{ flex: 5 }} gap={4}>
@@ -34,7 +36,11 @@ const Foods = ({ data }: { data: RecipesType['recipes'][0] }) => {
                     <Image source={{ uri: data.image }} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
                 </Block>
                 <Block center style={{ position: "absolute", bottom: -30 }}>
-                    <Button size="small" color={Theme.COLORS.BG} style={{ borderWidth: 1, borderColor: Theme.COLORS.ACTIVE }}>
+                    <Button size="small" color={Theme.COLORS.BG} style={{ borderWidth: 1, borderColor: Theme.COLORS.ACTIVE }}
+                        onPress={() => {
+                            setSheet(() => 0)
+                            setCart(() => data)
+                        }}>
                         <Text style={[styles.text, { color: Theme.COLORS.ACTIVE, fontSize: 20 }]}>ADD</Text>
                     </Button>
                 </Block>
@@ -53,9 +59,51 @@ const Restaurant = (props: RestaurantProps) => {
         queryKey: ['recipe'],
         queryFn: getRecipes
     })
+    const [cart, setCart] = useState<RecipesType['recipes'][0] | null>(null);
+    const [openSheet, setOpenSheet] = useState<number>(-1);
+    const [quants, setQuants] = useState<number>(1);
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
+                {openSheet !== -1 &&
+                    <AppBottomSheet onChange={setOpenSheet}>
+                        <View style={styles.sheetContainer}>
+                            <View style={styles.sheetHeader}>
+                                <Block row middle space='between'>
+                                    <Block row middle flex={4} gap={10} style={{ maxWidth: "60%" }}>
+                                        <Block style={{ borderRadius: 8, overflow: "hidden" }}>
+                                            <Image source={{ uri: cart && cart.image }} style={{ height: 50, width: 50, resizeMode: "cover" }} />
+                                        </Block>
+                                        <Text style={[styles.text, { fontSize: 18 }]}>{cart && cart.name}</Text>
+                                    </Block>
+                                    <Block row middle gap={10}>
+                                        <HeroIcon name="hearto" family="AntDesign" containerStyle={{
+                                            borderWidth: 1,
+                                            borderRadius: 50,
+                                            borderColor: Theme.COLORS.MUTED
+                                        }} style={{ padding: 6, color: "red" }} />
+                                        <HeroIcon name="share" family="FontAwesome5" containerStyle={{
+                                            borderWidth: 1,
+                                            borderRadius: 50,
+                                            borderColor: Theme.COLORS.MUTED
+                                        }} style={{ padding: 6, color: "red" }} />
+                                    </Block>
+
+                                </Block>
+                            </View>
+                            <View style={styles.sheetBody}>
+
+                            </View>
+                            <View style={styles.sheetFooter}>
+                                <Block row middle space='between'>
+                                    <AppQuantity quants={quants} setQuant={setQuants} />
+                                    <Button style={{ borderRadius: 10 }}>
+                                        <Text style={[styles.text, { color: Theme.COLORS.WHITE, padding: "4%" }]}>Add item - ₹{quants* 150}</Text>
+                                    </Button>
+                                </Block>
+                            </View>
+                        </View>
+                    </AppBottomSheet>}
                 <View style={styles.header}>
                     <Block row middle space='between'>
                         <Block>
@@ -86,8 +134,8 @@ const Restaurant = (props: RestaurantProps) => {
                     <Block style={{ marginVertical: "8%" }}>
                         <ScrollView showsHorizontalScrollIndicator={false} horizontal>
                             <Block row middle gap={20}>
-                                {filters.map((item) => (
-                                    <HeroIcon name={item.icon} family={item.family} text={item.name} right
+                                {filters.map((item, index) => (
+                                    <HeroIcon name={item.icon} key={index} family={item.family} text={item.name} right
                                         textStyle={{ fontFamily: Theme.FONTFAMILY.BOLD }}
                                         containerStyle={styles.card} />
                                 ))}
@@ -95,18 +143,14 @@ const Restaurant = (props: RestaurantProps) => {
                             </Block>
                         </ScrollView>
                     </Block>
-
-
                     <FlatList
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
                         data={data && data.recipes}
                         renderItem={({ item, index, separators }) => (
-                            <Foods data={item} key={item.id} />
+                            <Foods data={item} key={item.id} setSheet={setOpenSheet} setCart={setCart} />
                         )}
                     />
-
-
 
                 </View>
 
@@ -119,7 +163,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Theme.COLORS.WHITE,
-        padding: "4%"
+        padding: "4%",
     },
     header: {
         flex: 1
@@ -148,6 +192,26 @@ const styles = StyleSheet.create({
         padding: 6,
         gap: 4
     },
+    sheetContainer: {
+        flex: 1,
+        maxWidth: Constant.width,
+        backgroundColor: Theme.COLORS.BG2
+    },
+    sheetHeader: {
+        flex: 1,
+        backgroundColor: Theme.COLORS.WHITE,
+        elevation: 3,
+        padding: "5%"
+    },
+    sheetBody: {
+        flex: 7
+    },
+    sheetFooter: {
+        flex: 2,
+        backgroundColor: Theme.COLORS.WHITE,
+        elevation: 4,
+        padding: "4%",
+    }
 })
 
 export default Restaurant

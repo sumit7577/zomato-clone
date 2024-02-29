@@ -7,21 +7,22 @@ import BottomSheet, {
 import { Constant } from '../Utils';
 import { Button } from 'galio-framework';
 
-interface BottomSheetProps{
-    children:React.ReactNode
+interface BottomSheetProps {
+    children: React.ReactNode,
+    onChange: React.Dispatch<React.SetStateAction<number>>;
 }
-const BottomSheets = (props:BottomSheetProps) => {
-    const {children} = props;
+const BottomSheets = (props: BottomSheetProps) => {
+    const { children, onChange } = props;
     // hooks
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     // variables
-    const snapPoints = useMemo(() => ["50%"], []);
+    const snapPoints = useMemo(() => ["70%"], []);
 
     // callbacks
     const handleSheetChange = useCallback((index: any) => {
         // eslint-disable-next-line no-console
-        console.log('handleSheetChange', index);
+        onChange(() => index)
     }, []);
     const handleSnapPress = useCallback((index: number) => {
         bottomSheetRef.current?.snapToIndex(index);
@@ -41,7 +42,7 @@ const BottomSheets = (props:BottomSheetProps) => {
         <View style={styles.container}>
             <BottomSheet
                 ref={bottomSheetRef}
-                index={-1}
+                index={0}
                 snapPoints={snapPoints}
                 animateOnMount={true}
                 enablePanDownToClose={true}
@@ -58,10 +59,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 24,
-        zIndex:1000,
-        height:Constant.height,
-        position:"absolute",
-        width:Constant.width,
+        position: "absolute",
+        height: Constant.height,
+        width: Constant.width,
+        zIndex: 2
     },
 });
 
