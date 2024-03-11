@@ -12,6 +12,9 @@ import { initialState } from "../store/user/reducer";
 import { User } from "@react-native-google-signin/google-signin";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { DeliveryScreenProps } from "../navigation";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import HeroIcon from "../components/HeroIcon";
+import Geolocation from 'react-native-geolocation-service';
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
@@ -20,6 +23,7 @@ type DeliveryProps = DeliveryScreenProps<"DeliveryStack">;
 const Delivery = (props: DeliveryProps) => {
     const userData = useMMKVStorage<undefined | User | FirebaseAuthTypes.UserCredential>("user", AppStorge);
     const [selected, setSelected] = useState<"Recommended" | "Favourites">("Recommended");
+    const [openSheet, setOpenSheet] = useState<number>(-1);
     const { data, isLoading, isError } = useQuery({
         queryKey: ['recipe'],
         queryFn: getRecipes
@@ -32,14 +36,59 @@ const Delivery = (props: DeliveryProps) => {
             </SafeAreaView>
         )
     }
+
+    const getLocation = async () => {
+        Geolocation.getCurrentPosition((data) => {
+            console.log(data)
+        },
+            (error) => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+    }
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
+                {openSheet !== -1 &&
+                    <AppBottomSheet onChange={setOpenSheet}>
+                        <View style={styles.sheetContainer}>
+                            <View style={styles.sheetHeader}>
+                                <Block row style={{ alignItems: "center" }} gap={10}>
+                                    <Icon name="down" family="AntDesign" size={20} color={Theme.COLORS.BLACK} />
+                                    <Text style={[styles.text, { fontSize: 20 }]}>Select a location</Text>
+                                </Block>
+
+                            </View>
+                            <View style={styles.sheetBody}>
+                                <BottomSheetScrollView>
+                                    <Block gap={30} style={styles.card}>
+                                        <HeroIcon name="plus" family="AntDesign"
+                                            color={Theme.COLORS.ERROR}
+                                            textStyle={{ color: Theme.COLORS.ERROR }}
+                                            containerStyle={{ gap: 20 }}
+                                            right text="Add address" />
+
+                                        <HeroIcon name="gps-fixed" family="MaterialIcons"
+                                            color={Theme.COLORS.ERROR}
+                                            textStyle={{ color: Theme.COLORS.ERROR }}
+                                            containerStyle={{ gap: 20 }}
+                                            onClick={getLocation}
+                                            right text="Use your current location" />
+                                    </Block>
+                                </BottomSheetScrollView>
+
+                            </View>
+                            <View style={styles.sheetFooter}>
+
+                            </View>
+                        </View>
+                    </AppBottomSheet>}
                 <View style={styles.header}>
 
                     <Block row space="between">
                         <TouchableOpacity onPress={() => {
-                            console.log("clicked")
+                            setOpenSheet(() => 0)
                         }}>
                             <Block row>
                                 <Block>
@@ -138,7 +187,7 @@ const Delivery = (props: DeliveryProps) => {
 const styles = StyleSheet.create({
     container: {
         display: "flex",
-        height: Constant.height,
+        flex: 1,
         paddingHorizontal: "5%",
         paddingVertical: "5%",
         backgroundColor: Theme.COLORS.WHITE
@@ -165,6 +214,29 @@ const styles = StyleSheet.create({
         display: "flex",
         flex: 1,
         borderRadius: 8
+    },
+    sheetContainer: {
+        flex: 1,
+        maxWidth: Constant.width,
+        backgroundColor: Theme.COLORS.BG2,
+        padding: "5%"
+    },
+    sheetHeader: {
+        flex: 1,
+
+    },
+    sheetBody: {
+        flex: 7
+    },
+    sheetFooter: {
+        flex: 2,
+        padding: "4%",
+    },
+    card: {
+        backgroundColor: Theme.COLORS.WHITE,
+        padding: "4%",
+        borderRadius: 8,
+        elevation: 3
     }
 })
 

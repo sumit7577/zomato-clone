@@ -17,7 +17,7 @@ const BottomSheets = (props: BottomSheetProps) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     // variables
-    const snapPoints = useMemo(() => ["70%"], []);
+    const snapPoints = useMemo(() => ["70%","90%"], []);
 
     // callbacks
     const handleSheetChange = useCallback((index: any) => {

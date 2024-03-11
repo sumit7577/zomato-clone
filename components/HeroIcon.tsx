@@ -15,7 +15,7 @@ interface HeroIconsProps extends IconProps {
 }
 
 export default function HeroIcon(props: HeroIconsProps) {
-    const { onClick, left, right, text, textStyle, containerStyle } = props;
+    const { onClick, left, right, text, textStyle, containerStyle, color } = props;
     const textStyls = [
         styles.text,
         textStyle && textStyle
@@ -28,7 +28,7 @@ export default function HeroIcon(props: HeroIconsProps) {
     return (
         <TouchableOpacity onPress={onClick} style={blockStyle}>
             {left && <Text style={textStyls}>{text}</Text>}
-            <Icon  {...props} size={25} color={Theme.COLORS.BLACK} />
+            <Icon  {...props} size={25} color={color ? color : Theme.COLORS.BLACK} />
             {right && <Text style={textStyls}>{text}</Text>}
         </TouchableOpacity>
     )
