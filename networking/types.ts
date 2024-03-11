@@ -42,4 +42,18 @@ const Recipes = {
     }]
 }
 
+const Carts = {
+    "carts": [{
+        "id": 8,
+        "products": [{ "id": 45, "title": "Malai Maxi Dress", "price": 50, "quantity": 1, "total": 50, "discountPercentage": 5.07, "discountedPrice": 47, "thumbnail": "https://cdn.dummyjson.com/product-images/45/thumbnail.jpg" }],
+        "total": 1129,
+        "discountedTotal": 952,
+        "userId": 1,
+        "totalProducts": 5,
+        "totalQuantity": 9
+    }],
+    "total": 1, "skip": 0, "limit": 1
+}
+
 export type RecipesType = typeof Recipes;
+export type CartsType = typeof Carts;

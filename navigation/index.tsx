@@ -9,11 +9,15 @@ import Login from "../screens/Login";
 import Otp from "../screens/Otp";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import Restaurant from "../screens/Restaurant";
+import Cart from "../screens/Cart";
+import Payment from "../screens/Payment";
 
 
 type DeliveryStackParamList = {
     DeliveryStack: undefined,
-    Restaurant: undefined
+    Restaurant: undefined,
+    Cart: undefined,
+    Payment:undefined
 };
 
 const Delievery = createNativeStackNavigator<DeliveryStackParamList>()
@@ -27,6 +31,8 @@ const DeliveryNavigator = () => {
             }}>
                 <Delievery.Screen name="DeliveryStack" component={Delivery} />
                 <Delievery.Screen name="Restaurant" component={Restaurant} />
+                <Delievery.Screen name="Cart" component={Cart} />
+                <Delievery.Screen name="Payment" component={Payment} />
             </Delievery.Navigator>
         </NavigationContainer>
 

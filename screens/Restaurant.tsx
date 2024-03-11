@@ -5,11 +5,11 @@ import { Constant, Images, Theme } from '../Utils'
 import { Block, Button, Icon, IconFamilyType } from 'galio-framework'
 import HeroIcon from '../components/HeroIcon'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
-import { useQuery } from '@tanstack/react-query'
-import { getRecipes } from '../networking/controller'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { addCart, addCartType, getRecipes } from '../networking/controller'
 import { RecipesType } from '../networking/types'
 import { DeliveryScreenProps } from '../navigation'
-import { AppBottomSheet, AppQuantity } from '../components'
+import { AppBottomSheet, AppLoader, AppQuantity } from '../components'
 import { BottomSheetFlatList, BottomSheetScrollView } from '@gorhom/bottom-sheet'
 
 const filters: { name: string, family: IconFamilyType, icon: string }[] = [
@@ -23,7 +23,11 @@ const filters: { name: string, family: IconFamilyType, icon: string }[] = [
 ]
 
 
-const Foods = ({ data, setSheet, setCart }: { data: RecipesType['recipes'][0], setSheet: React.Dispatch<React.SetStateAction<number>>, setCart: React.Dispatch<React.SetStateAction<RecipesType['recipes'][0]>> }) => {
+const Foods = ({ data, setSheet, setCart, setQuant }: {
+    data: RecipesType['recipes'][0], setSheet: React.Dispatch<React.SetStateAction<number>>,
+    setCart: React.Dispatch<React.SetStateAction<RecipesType['recipes'][0]>>,
+    setQuant: React.Dispatch<React.SetStateAction<number>>
+}) => {
     return (
         <Block row space='between' middle style={{ maxHeight: Constant.height / 3, borderBottomWidth: 1, borderColor: Theme.COLORS.MUTED, paddingVertical: "10%" }}>
             <Block style={{ flex: 5 }} gap={4}>
@@ -40,6 +44,7 @@ const Foods = ({ data, setSheet, setCart }: { data: RecipesType['recipes'][0], s
                         onPress={() => {
                             setSheet(() => 0)
                             setCart(() => data)
+                            setQuant(() => 1)
                         }}>
                         <Text style={[styles.text, { color: Theme.COLORS.ACTIVE, fontSize: 20 }]}>ADD</Text>
                     </Button>
@@ -62,8 +67,41 @@ const Restaurant = (props: RestaurantProps) => {
     const [cart, setCart] = useState<RecipesType['recipes'][0] | null>(null);
     const [openSheet, setOpenSheet] = useState<number>(-1);
     const [quants, setQuants] = useState<number>(1);
+    const [addCarts, setAddCart] = useState<addCartType | null>(null);
+
+    const addToCartMutation = useMutation({
+        mutationKey: ['cart'],
+        mutationFn: (data: addCartType) => {
+            return addCart(data)
+        },
+        onSuccess:(data)=>{
+            //console.log("data",data)
+        }
+    })
+
+    const addToCart = () => {
+        const prevCarts = addCarts;
+        if (cart !== null) {
+            if (prevCarts !== null) {
+                const item = { id: cart.id, quantity: quants }
+                prevCarts.userId = 1;
+                prevCarts.products.push(item)
+                setAddCart(prevCarts)
+                addCarts && addToCartMutation.mutate(addCarts)
+                props.navigation.navigate("Cart");
+            }
+            else {
+                setAddCart({ userId: 1, products: [{ id: cart.id, quantity: quants }] })
+                addCarts && addToCartMutation.mutate(addCarts)
+                props.navigation.navigate("Cart");
+            }
+            setOpenSheet(() => -1)
+        }
+
+    }
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <AppLoader show={addToCartMutation.isPending} />
             <View style={styles.container}>
                 {openSheet !== -1 &&
                     <AppBottomSheet onChange={setOpenSheet}>
@@ -72,7 +110,7 @@ const Restaurant = (props: RestaurantProps) => {
                                 <Block row middle space='between'>
                                     <Block row middle flex={4} gap={10} style={{ maxWidth: "60%" }}>
                                         <Block style={{ borderRadius: 8, overflow: "hidden" }}>
-                                            <Image source={{ uri: cart && cart.image }} style={{ height: 50, width: 50, resizeMode: "cover" }} />
+                                            <Image source={{ uri: cart && cart.image || "" }} style={{ height: 50, width: 50, resizeMode: "cover" }} />
                                         </Block>
                                         <Text style={[styles.text, { fontSize: 18 }]}>{cart && cart.name}</Text>
                                     </Block>
@@ -92,13 +130,16 @@ const Restaurant = (props: RestaurantProps) => {
                                 </Block>
                             </View>
                             <View style={styles.sheetBody}>
+                                <BottomSheetScrollView>
+                                    <Text>i am middle part</Text>
+                                </BottomSheetScrollView>
 
                             </View>
                             <View style={styles.sheetFooter}>
                                 <Block row middle space='between'>
                                     <AppQuantity quants={quants} setQuant={setQuants} />
-                                    <Button style={{ borderRadius: 10 }}>
-                                        <Text style={[styles.text, { color: Theme.COLORS.WHITE, padding: "4%" }]}>Add item - ₹{quants* 150}</Text>
+                                    <Button style={{ borderRadius: 10 }} onPress={addToCart}>
+                                        <Text style={[styles.text, { color: Theme.COLORS.WHITE, padding: "4%" }]}>Add item - ₹{quants * 150}</Text>
                                     </Button>
                                 </Block>
                             </View>
@@ -148,7 +189,7 @@ const Restaurant = (props: RestaurantProps) => {
                         showsVerticalScrollIndicator={false}
                         data={data && data.recipes}
                         renderItem={({ item, index, separators }) => (
-                            <Foods data={item} key={item.id} setSheet={setOpenSheet} setCart={setCart} />
+                            <Foods data={item} key={item.id} setSheet={setOpenSheet} setCart={setCart} setQuant={setQuants} />
                         )}
                     />
 

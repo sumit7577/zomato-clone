@@ -1,5 +1,5 @@
 import { DummyClient, ProductionClient } from "./index";
-import { RecipesType } from "./types";
+import { CartsType, RecipesType } from "./types";
 
 
 const getRecipes = async (): Promise<RecipesType> => {
@@ -15,4 +15,20 @@ const getTodos = async () => {
     return data
 }
 
-export { getRecipes, getTodos }
+export type addCartType = {
+    userId: number, products: [{ id: number, quantity: number }]
+}
+
+const addCart = async (data: addCartType) => {
+    const req = await DummyClient.post("carts/add", data);
+    const resp = await req.data;
+    return resp;
+}
+
+const getCart = async (userId: number):Promise<CartsType> => {
+    const req = await DummyClient.get("carts/user/1");
+    const resp = await req.data;
+    return resp;
+}
+
+export { getRecipes, getTodos, addCart, getCart }
