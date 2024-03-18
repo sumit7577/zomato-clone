@@ -15,6 +15,7 @@ import { DeliveryScreenProps } from "../navigation";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import HeroIcon from "../components/HeroIcon";
 import Geolocation from 'react-native-geolocation-service';
+import VoiceTest from "../components/VoiceApi";
 
 const filters = ["Nearest", "Previously Ordered", "Pure Veg", "Cusines", "Rating 4.0+"]
 
@@ -24,6 +25,8 @@ const Delivery = (props: DeliveryProps) => {
     const userData = useMMKVStorage<undefined | User | FirebaseAuthTypes.UserCredential>("user", AppStorge);
     const [selected, setSelected] = useState<"Recommended" | "Favourites">("Recommended");
     const [openSheet, setOpenSheet] = useState<number>(-1);
+    const [voiceText, setVoiceText] = useState<string>("")
+    const voiceRef = useRef(null);
     const { data, isLoading, isError } = useQuery({
         queryKey: ['recipe'],
         queryFn: getRecipes
@@ -84,6 +87,8 @@ const Delivery = (props: DeliveryProps) => {
                             </View>
                         </View>
                     </AppBottomSheet>}
+                <VoiceTest ref={voiceRef} setVoiceResult={setVoiceText} />
+
                 <View style={styles.header}>
 
                     <Block row space="between">
@@ -116,12 +121,17 @@ const Delivery = (props: DeliveryProps) => {
                     </Block>
 
                     <Input
-                        placeholder='Search "Pizza"'
+                        placeholder='Search Pizza'
                         right
                         icon="search"
                         family="Feather"
                         iconSize={20}
                         iconColor="red"
+                        value={voiceText}
+                        onChangeText={(text) => {
+                            setVoiceText((prev)=> text)
+                        }}
+                        onPress={voiceRef.current && voiceRef.current._startRecognizing}
                     />
                     <ScrollView horizontal style={{ flex: 0 }} showsHorizontalScrollIndicator={false}>
                         <Block gap={8} row>

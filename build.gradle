@@ -92,9 +92,9 @@ android {
         }
 
         release{
-            storeFile file('release.keystore')
+            storeFile file('demoStore')
             storePassword 'hardpass'
-            keyAlias 'androiddebugkey'
+            keyAlias 'demo'
             keyPassword 'android'
         }
     }
